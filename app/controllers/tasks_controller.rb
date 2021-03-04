@@ -1,6 +1,7 @@
 class TasksController < ApplicationController
   before_action :require_user_logged_in
-  
+  before_action :ensure_current_user, only: [:show]
+
   def index
     @tasks = current_user.tasks.order(id: :desc).page(params[:page])
   end
@@ -51,6 +52,12 @@ class TasksController < ApplicationController
   
   private
   
+  def ensure_current_user
+    if @current_user.id != params[:id].to_i
+      flash[:notice]="ログインが必要です"
+      redirect_to login_url
+    end
+  end
   
   
   # Strong Parameter
